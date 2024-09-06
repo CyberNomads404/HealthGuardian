@@ -72,6 +72,31 @@ A **HealthMonitor API** facilita o registro e acompanhamento de dados de saúde,
 
 2. **A API estará disponível em `http://localhost:8000`.**
 
+
+### 🐋 DOCKER
+
+1. Copie os arquivos docker-compose.yml, Dockerfile e o diretório docker/ para o seu projeto
+    ```sh
+    cp -rf setup-docker-laravel/* app-laravel/
+    ```
+    ```sh
+    sudo chmod -R 777 app-laravel
+    cd app-laravel/
+    ```
+2. Instale as dependências do projeto
+   ```sh
+   docker-compose exec --user root app composer install
+   ```
+3. Gerar a key do projeto Laravel
+   ```sh
+    docker-compose exec --user root app php artisan key:generate
+   ```
+4. Gerar o Banco de Dados
+   ```sh
+    docker-compose exec --user root app php artisan migrate
+   ```
+
+
 ## 🎨 Usando a API
 
 1. **Autenticação:**
