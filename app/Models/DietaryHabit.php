@@ -13,4 +13,11 @@ class DietaryHabit extends Model
         'food_description',
         'calories',
     ];
+
+    // RelationShips
+
+    public function register()
+    {
+        return $this->morphOne(Register::class, 'register');
+    }
 }
