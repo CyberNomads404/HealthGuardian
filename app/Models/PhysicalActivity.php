@@ -13,4 +13,11 @@ class PhysicalActivity extends Model
         'activity_description',
         'duration',
     ];
+
+    // RelationShips
+
+    public function register()
+    {
+        return $this->morphOne(Register::class, 'register');
+    }
 }

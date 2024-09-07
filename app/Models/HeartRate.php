@@ -16,4 +16,11 @@ class HeartRate extends Model
     protected $casts = [
         'heart_rate' => 'integer',
     ];
+
+    // RelationShips
+
+    public function register()
+    {
+        return $this->morphOne(Register::class, 'register');
+    }
 }

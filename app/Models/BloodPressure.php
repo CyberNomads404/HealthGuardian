@@ -17,4 +17,11 @@ class BloodPressure extends Model
         'systolic_pressure' => 'integer',
         'diastolic_pressure' => 'integer',
     ];
+
+    // RelationShips
+
+    public function register()
+    {
+        return $this->morphOne(Register::class, 'register');
+    }
 }
