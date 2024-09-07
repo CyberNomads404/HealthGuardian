@@ -18,8 +18,5 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
-        HeartRate::factory(10)->create();
-        BloodPressure::factory(10)->create();
     }
 }
