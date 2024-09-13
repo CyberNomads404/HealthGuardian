@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,33 +18,79 @@ class UserController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 "data" => [
-                    "msg" => "Authorized",
+                    "message" => "Authorized",
                     "token" => $request->user()->createToken('login')->plainTextToken
                 ]
             ], 200);
         }
-        return response()->json('Not Authorized', 403);
+
+        return response()->json(
+            [
+                "errors" => [
+                    'message' => 'Not Authorized'
+                ],
+            ],
+            403
+        );
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json('Token Revoked', 200);
+        return response()->json(
+            [
+                "data" => [
+                    'message' => 'Token was Revoked'
+                ],
+            ],
+            200
+        );
     }
 
     public function register(Request $request)
     {
         $request['password'] = bcrypt($request->password);
-        User::create($request->only('name', 'email', 'password', "date_birthday", "gender"));
+        $user = User::create($request->only('name', 'email', 'password', "date_birthday", "gender"));
+        $user->assignProfile('person');
 
-        return response()->json('User Created', 201);
+        return response()->json(
+            [
+                "data" => [
+                    'message' => 'User Registered Successfully'
+                ],
+            ],
+            201
+        );
     }
 
     public function profile()
     {
-        return auth()->user();
+        return new UserResource(User::find(auth()->user()->id)->load('profile'));
     }
+
+    public function editProfile(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+
+        if ($request->password) {
+            $request['password'] = bcrypt($request->password);
+            auth('api')->logout();
+        }
+
+        $user->update($request->only('name', 'password', "date_birthday", "gender"));
+
+        return response()->json(
+            [
+                "data" => [
+                    'message' => 'Successfully Edit User Profile'
+                ],
+            ],
+            200
+        );
+    }
+
+    // Admin + Doctor
 
     public function index()
     {
