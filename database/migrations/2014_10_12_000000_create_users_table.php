@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->date('date_birthday');
             $table->smallInteger('gender');
+            $table->foreignId('profile_id')->constrained('profiles')->cascadeOnDelete();
             $table->rememberToken();
             $table->timestamps();
         });

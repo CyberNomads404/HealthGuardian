@@ -50,4 +50,24 @@ class User extends Authenticatable
     public function registers() {
         return $this->hasMany(Register::class);
     }
+
+    public function profile() {
+        return $this->hasOne(Profile::class);
+    }
+
+    // Functions
+
+    public function assignProfile(string $profile): void
+    {
+        $profile = $this->profile()->first([
+            'name' => $profile,
+        ]);
+
+        $this->profile()->attach($profile);
+    }
+
+    public function hasProfile(string $profile): bool
+    {
+        return $this->profile()->where('name', $profile)->exists();
+    }
 }
