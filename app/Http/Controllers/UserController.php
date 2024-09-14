@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -94,7 +95,7 @@ class UserController extends Controller
 
     public function index()
     {
-        return User::all();
+        return UserResource::collection(User::all());
     }
 
     /**
@@ -102,7 +103,18 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request['password'] = bcrypt($request->password);
+        $user = User::create($request->only('name', 'email', 'password', "date_birthday", "gender"));
+        $user->assignProfile($request->profile);
+
+        return response()->json(
+            [
+                "data" => [
+                    'message' => 'User Registered Successfully'
+                ],
+            ],
+            201
+        );
     }
 
     /**
@@ -110,7 +122,25 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        return User::find($id);
+        $me = User::find(auth()->user()->id);
+        $user = null;
+
+        if ($me->hasProfile('admin')) {
+            $user = User::find($id);
+        } else if ($me->hasProfile('doctor')) {
+            $user = User::where('profile_id', 3)->find($id);
+        }
+
+        if (!$user) {
+            return response()->json(
+                [
+                    "errors" => ['NotFound' => 'User Not Found']
+                ],
+                404
+            );
+        }
+
+        return new UserResource($user);
     }
 
     /**
@@ -118,7 +148,43 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if (!$user = User::find($id)) {
+            return response()->json(
+                [
+                    "errors" => [
+                        'NotFound' => 'User Not Found'
+                    ],
+                ],
+                404
+            );
+        }
+
+        if ($user->id == auth()->user()->id){
+            return response()->json(
+                [
+                    "errors" => [
+                        'MySelf' => 'User is you'
+                    ],
+                ],
+                404
+            );
+        }
+
+        if ($request->password) {
+            $request['password'] = bcrypt($request->password);
+            auth('api')->logout();
+        }
+
+        $user->update($request->only('name', 'password', "date_birthday", "gender", "profile_id"));
+
+        return response()->json(
+            [
+                "data" => [
+                    'message' => 'Successfully Edit User'
+                ],
+            ],
+            204
+        );
     }
 
     /**
@@ -126,6 +192,37 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if (!$user = User::find($id)) {
+            return response()->json(
+                [
+                    "errors" => [
+                        'NotFound' => 'User Not Found'
+                    ],
+                ],
+                404
+            );
+        }
+
+        if ($user->id == auth()->user()->id){
+            return response()->json(
+                [
+                    "errors" => [
+                        'MySelf' => 'User is you'
+                    ],
+                ],
+                404
+            );
+        }
+
+        $user->delete();
+
+        return response()->json(
+            [
+                "data" => [
+                    'message' => 'Successfully Delete User'
+                ],
+            ],
+            204
+        );
     }
 }
