@@ -48,11 +48,13 @@ class User extends Authenticatable
 
     //Relationships
 
-    public function registers() {
+    public function registers()
+    {
         return $this->hasMany(Register::class);
     }
 
-    public function profile() {
+    public function profile()
+    {
         return $this->belongsTo(Profile::class);
     }
 
@@ -60,13 +62,15 @@ class User extends Authenticatable
 
     public function assignProfile(string $profileName): void
     {
-        $profile = Profile::where('name', $profileName)->first();
+        if ($profileName) {
+            $profile = Profile::where('name', $profileName)->first();
 
-        if ($profile) {
-            $this->profile_id = $profile->id;
-            $this->save();
-        } else {
-            throw new \Exception("Profile not found: {$profileName}");
+            if ($profile) {
+                $this->profile_id = $profile->id;
+                $this->save();
+            } else {
+                throw new \Exception("Profile not found: {$profileName}");
+            }
         }
     }
 

@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Users\Admin\UserStoreRequest;
+use App\Http\Requests\Users\Admin\UserUpdateRequest;
+use App\Http\Requests\Users\EditProfileRequest;
+use App\Http\Requests\Users\LoginRequest;
+use App\Http\Requests\Users\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -14,7 +19,7 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         if (Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
@@ -35,9 +40,9 @@ class UserController extends Controller
         );
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
+        auth()->user()->currentAccessToken()->delete();
 
         return response()->json(
             [
@@ -49,7 +54,7 @@ class UserController extends Controller
         );
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         $request['password'] = bcrypt($request->password);
         $user = User::create($request->only('name', 'email', 'password', "date_birthday", "gender"));
@@ -70,13 +75,13 @@ class UserController extends Controller
         return new UserResource(User::find(auth()->user()->id)->load('profile'));
     }
 
-    public function editProfile(Request $request)
+    public function editProfile(EditProfileRequest $request)
     {
         $user = User::find(auth()->user()->id);
 
         if ($request->password) {
             $request['password'] = bcrypt($request->password);
-            auth('api')->logout();
+            auth()->user()->currentAccessToken()->delete();
         }
 
         $user->update($request->only('name', 'password', "date_birthday", "gender"));
@@ -95,13 +100,22 @@ class UserController extends Controller
 
     public function index()
     {
-        return UserResource::collection(User::all());
+        $me = User::find(auth()->user()->id);
+        $users = null;
+
+        if ($me->hasProfile('admin')) {
+            $users = User::all();
+        } else if ($me->hasProfile('doctor')) {
+            $users = User::where('profile_id', 3)->get();
+        }
+
+        return UserResource::collection($users);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
         $request['password'] = bcrypt($request->password);
         $user = User::create($request->only('name', 'email', 'password', "date_birthday", "gender"));
@@ -146,7 +160,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, string $id)
     {
         if (!$user = User::find($id)) {
             return response()->json(
@@ -172,10 +186,11 @@ class UserController extends Controller
 
         if ($request->password) {
             $request['password'] = bcrypt($request->password);
-            auth('api')->logout();
+            auth()->user()->currentAccessToken()->delete();
         }
 
-        $user->update($request->only('name', 'password', "date_birthday", "gender", "profile_id"));
+        $user->update($request->only('name', 'password', "date_birthday", "gender"));
+        $user->assignProfile($request->profile ?? '');
 
         return response()->json(
             [
