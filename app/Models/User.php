@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'date_birthday',
         'gender',
+        'profile_id',
     ];
 
     /**
@@ -47,7 +48,34 @@ class User extends Authenticatable
 
     //Relationships
 
-    public function registers() {
+    public function registers()
+    {
         return $this->hasMany(Register::class);
+    }
+
+    public function profile()
+    {
+        return $this->belongsTo(Profile::class);
+    }
+
+    // Functions
+
+    public function assignProfile(string $profileName): void
+    {
+        if ($profileName) {
+            $profile = Profile::where('name', $profileName)->first();
+
+            if ($profile) {
+                $this->profile_id = $profile->id;
+                $this->save();
+            } else {
+                throw new \Exception("Profile not found: {$profileName}");
+            }
+        }
+    }
+
+    public function hasProfile(string $profile): bool
+    {
+        return $this->profile()->where('name', $profile)->exists();
     }
 }
