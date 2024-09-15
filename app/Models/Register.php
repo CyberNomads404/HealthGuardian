@@ -33,7 +33,7 @@ class Register extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function registerable() {
+    public function register() {
         return $this->morphTo('register');
     }
 }
