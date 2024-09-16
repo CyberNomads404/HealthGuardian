@@ -17,7 +17,7 @@
 A **HealthMonitor API** facilita o registro e acompanhamento de dados de saúde, fornecendo endpoints que permitem o gerenciamento de informações essenciais, como frequência cardíaca, pressão arterial, atividades físicas e hábitos alimentares. A API é projetada para ser flexível e fácil de integrar a diferentes frontends.
 
 ### Diagrama de Classe 
-![HealthMonitor_ drawio](https://github.com/user-attachments/assets/f228531f-3a3f-4017-aaa6-990e764fc53b)
+![HealthMonitor  drawio](https://github.com/user-attachments/assets/24c550fc-eab0-42e7-a86d-febd254bd533)
 
 ## 🛠 Tecnologias
 
