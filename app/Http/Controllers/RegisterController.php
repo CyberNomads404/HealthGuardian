@@ -9,8 +9,8 @@ use App\Models\PhysicalActivity;
 use App\Models\Register;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\RegisterResource;
+use App\Http\Requests\Register\RegisterRequest;
+use App\Http\Resources\Register\RegisterResource;
 
 class RegisterController extends Controller
 {
@@ -20,16 +20,19 @@ class RegisterController extends Controller
     public function index(Request $request)
     {
         $user = User::find(auth()->user()->id);
+        $registers = [];
 
         if ($user->hasProfile("person")) {
-            return Register::where("user_id", $user->id)->get()->load("register");
+            $registers = Register::where("user_id", $user->id)->get()->load("register");
         }
 
         if(isset($request->user_id)){
-            return Register::where("user_id", $request->user_id)->get()->load("register");
+            $registers = Register::where("user_id", $request->user_id)->get()->load("register");
+        } else {
+            $registers = Register::all()->load("register");
         }
 
-        return Register::all()->load("register");
+        return RegisterResource::collection($registers);
     }
 
     /**
@@ -46,14 +49,14 @@ class RegisterController extends Controller
             DietaryHabit::class,
         ];
 
-        $register_type = $polymorphicModels[$request->type]::create($request->validated());
+        $register_type = $polymorphicModels[$request->type]::create($request->all());
         $register = $user->registers()->create([
             "date" => $request->date,
             "register_type" => $polymorphicModels[$request->type],
             "register_id" => $register_type->id,
         ]);
 
-        return new RegisterResource($register);
+        return new RegisterResource($register->load('register'));
     }
 
     /**
@@ -72,7 +75,7 @@ class RegisterController extends Controller
         }
 
         if ($register) {
-            return $register->load("register");
+            return new RegisterResource($register->load("register"));
         }
         else{
             return response()->json(
