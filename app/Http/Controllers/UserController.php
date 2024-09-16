@@ -7,7 +7,7 @@ use App\Http\Requests\Users\Admin\UserUpdateRequest;
 use App\Http\Requests\Users\EditProfileRequest;
 use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\RegisterRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;

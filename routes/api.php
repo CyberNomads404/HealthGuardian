@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/edit', action: [UserController::class, 'editProfile'])->name('edit-profile');
     });
     Route::get('/logout', action: [UserController::class, 'logout'])->name('logout');
+});
+
+Route::prefix('/register')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', action: [RegisterController::class,'index'])->name('index');
+    Route::get('/{id}', action: [RegisterController::class,'show'])->name('show');
+    Route::middleware('can:person')->post('/', action: [RegisterController::class,'store'])->name('store');
+    Route::middleware('can:person,admin')->group(function () {
+        Route::put('/{id}', action: [RegisterController::class,'update'])->name('update');
+        Route::delete('/{id}', action: [RegisterController::class,'destroy'])->name('delete');
+    });
 });

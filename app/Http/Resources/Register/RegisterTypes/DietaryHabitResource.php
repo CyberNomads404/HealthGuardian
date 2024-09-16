@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Register\RegisterTypes;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class DietaryHabitResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,22 +15,10 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $gender = [
-            ["Masculino", "M"],
-            ["Feminino", "F"],
-        ];
-
         return [
             "id" => $this->id,
-            "name" => $this->name,
-            "email" => $this->email,
-            "date_birthday" => $this->date_birthday,
-            "date_birthday_format" => Carbon::parse($this->date_birthday)->format('d/m/Y'),
-            "gender" => [
-                "name" => $gender[$this->gender][0],
-                "reference" => $gender[$this->gender][1]
-            ],
-            "profile" => $this->profile->name,
+            'food_description' => $this->food_description,
+            'calories' => $this->calories,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             "created_at_format" => [
