@@ -9,6 +9,8 @@ use App\Models\PhysicalActivity;
 use App\Models\Register;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\RegisterResource;
 
 class RegisterController extends Controller
 {
@@ -33,7 +35,7 @@ class RegisterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
         $user = User::find(auth()->user()->id);
 
@@ -44,21 +46,14 @@ class RegisterController extends Controller
             DietaryHabit::class,
         ];
 
-        $register_type = $polymorphicModels[$request->type]::create($request->all());
+        $register_type = $polymorphicModels[$request->type]::create($request->validated());
         $register = $user->registers()->create([
             "date" => $request->date,
             "register_type" => $polymorphicModels[$request->type],
             "register_id" => $register_type->id,
         ]);
 
-        return response()->json(
-            [
-                "data" => [
-                    'message' => 'Register Registered Successfully'
-                ],
-            ],
-            201
-        );
+        return new RegisterResource($register);
     }
 
     /**
