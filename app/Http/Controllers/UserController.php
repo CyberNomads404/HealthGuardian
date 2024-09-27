@@ -148,7 +148,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(
                 [
-                    "errors" => ['NotFound' => 'User Not Found']
+                    "errors" => ['notFound' => 'User Not Found']
                 ],
                 404
             );
@@ -166,7 +166,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     "errors" => [
-                        'NotFound' => 'User Not Found'
+                        'notFound' => 'User Not Found'
                     ],
                 ],
                 404
@@ -177,7 +177,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     "errors" => [
-                        'MySelf' => 'User is you'
+                        'yourSelf' => 'User is you!'
                     ],
                 ],
                 404
@@ -211,7 +211,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     "errors" => [
-                        'NotFound' => 'User Not Found'
+                        'notFound' => 'User Not Found'
                     ],
                 ],
                 404
