@@ -9,7 +9,8 @@ use App\Models\PhysicalActivity;
 use App\Models\Register;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\Register\RegisterRequest;
+use App\Http\Requests\Register\RegisterStoreRequest;
+use App\Http\Requests\Register\RegisterUpdateRequest;
 use App\Http\Resources\Register\RegisterResource;
 
 class RegisterController extends Controller
@@ -38,7 +39,7 @@ class RegisterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RegisterRequest $request)
+    public function store(RegisterStoreRequest $request)
     {
         $user = User::find(auth()->user()->id);
 
@@ -81,7 +82,7 @@ class RegisterController extends Controller
             return response()->json(
                 [
                     "errors" => [
-                        'notfound' => 'Register Not Found'
+                        'notFound' => 'Register Not Found'
                     ],
                 ],
                 404
@@ -92,7 +93,7 @@ class RegisterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(RegisterUpdateRequest $request, string $id)
     {
         $user = User::find(auth()->user()->id);
         $register = null;
@@ -120,7 +121,7 @@ class RegisterController extends Controller
             return response()->json(
                 [
                     "errors" => [
-                        'notfound' => 'Register Not Found'
+                        'notFound' => 'Register Not Found'
                     ],
                 ],
                 404
@@ -158,7 +159,7 @@ class RegisterController extends Controller
             return response()->json(
                 [
                     "errors" => [
-                        'notfound' => 'Register Not Found'
+                        'notFound' => 'Register Not Found'
                     ],
                 ],
                 404
