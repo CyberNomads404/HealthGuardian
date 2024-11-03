@@ -22,15 +22,21 @@ class RegisterController extends Controller
     {
         $user = User::find(auth()->user()->id);
         $registers = [];
+        $per_page = $request->per_page ?? 50;
 
         if ($user->hasProfile("person")) {
-            $registers = Register::where("user_id", $user->id)->get()->load("register");
-        }
-
-        if(isset($request->user_id)){
-            $registers = Register::where("user_id", $request->user_id)->get()->load("register");
+            $registers = Register::where("user_id", $user->id)
+                ->with("register")
+                ->paginate($per_page);
         } else {
-            $registers = Register::all()->load("register");
+            if (isset($request->user_id)) {
+                $registers = Register::where("user_id", $request->user_id)
+                    ->with("register")
+                    ->paginate($per_page);
+            } else {
+                $registers = Register::with("register")
+                    ->paginate($per_page);
+            }
         }
 
         return RegisterResource::collection($registers);
@@ -70,15 +76,13 @@ class RegisterController extends Controller
 
         if ($user->hasProfile("person")) {
             $register = Register::where("user_id", $user->id)->find($id);
-        }
-        else{
+        } else {
             $register = Register::find($id);
         }
 
         if ($register) {
             return new RegisterResource($register->load("register"));
-        }
-        else{
+        } else {
             return response()->json(
                 [
                     "errors" => [
@@ -100,8 +104,7 @@ class RegisterController extends Controller
 
         if ($user->hasProfile("person")) {
             $register = Register::where("user_id", $user->id)->find($id);
-        }
-        else{
+        } else {
             $register = Register::find($id);
         }
 
@@ -116,8 +119,7 @@ class RegisterController extends Controller
                 ],
                 204
             );
-        }
-        else{
+        } else {
             return response()->json(
                 [
                     "errors" => [
@@ -139,8 +141,7 @@ class RegisterController extends Controller
 
         if ($user->hasProfile("person")) {
             $register = Register::where("user_id", $user->id)->find($id);
-        }
-        else{
+        } else {
             $register = Register::find($id);
         }
 
@@ -154,8 +155,7 @@ class RegisterController extends Controller
                 ],
                 204
             );
-        }
-        else{
+        } else {
             return response()->json(
                 [
                     "errors" => [

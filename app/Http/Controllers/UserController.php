@@ -98,15 +98,16 @@ class UserController extends Controller
 
     // Admin + Doctor
 
-    public function index()
+    public function index(Request $request)
     {
         $me = User::find(auth()->user()->id);
+        $per_page = $request->per_page ?? 10;
         $users = null;
 
         if ($me->hasProfile('admin')) {
-            $users = User::all();
+            $users = User::paginate($per_page);
         } else if ($me->hasProfile('doctor')) {
-            $users = User::where('profile_id', 3)->get();
+            $users = User::where('profile_id', 3)->paginate($per_page);
         }
 
         return UserResource::collection($users);
@@ -173,7 +174,7 @@ class UserController extends Controller
             );
         }
 
-        if ($user->id == auth()->user()->id){
+        if ($user->id == auth()->user()->id) {
             return response()->json(
                 [
                     "errors" => [
@@ -218,7 +219,7 @@ class UserController extends Controller
             );
         }
 
-        if ($user->id == auth()->user()->id){
+        if ($user->id == auth()->user()->id) {
             return response()->json(
                 [
                     "errors" => [

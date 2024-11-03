@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum', 'can:doctor'])->group(function () {
 
 
 Route::match(['get', 'post'], uri: '/login', action: [UserController::class, 'login'])->name('login');
-Route::post('/register', action: [UserController::class, 'register'])->name('register');
+Route::post('/user-register', action: [UserController::class, 'register'])->name('user-register');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('profile')->group(function () {
