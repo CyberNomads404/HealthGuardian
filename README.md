@@ -1,6 +1,6 @@
 # 🩺 HealthMonitor API
 
-**HealthMonitor API** é uma aplicação desenvolvida em Laravel que permite o registro e acompanhamento de dados de saúde, como frequência cardíaca, pressão arterial, atividades físicas e hábitos alimentares. Esta API foi criada para fornecer uma interface robusta para gerenciar dados de saúde, permitindo fácil integração com qualquer frontend.
+**HealthGuardian API** é uma aplicação desenvolvida em Laravel que permite o registro e acompanhamento de dados de saúde, como frequência cardíaca, pressão arterial, atividades físicas e hábitos alimentares. Esta API foi criada para fornecer uma interface robusta para gerenciar dados de saúde, permitindo fácil integração com qualquer frontend.
 
 ## 📚 Tabela de Conteúdos
 - [📖 Visão Geral](#-visão-geral)
